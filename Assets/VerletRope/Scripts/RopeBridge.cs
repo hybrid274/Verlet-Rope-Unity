@@ -11,7 +11,7 @@ public class RopeBridge : MonoBehaviour
     [SerializeField] private float ropeSegLen = 0.25f;
     [SerializeField][Range(2, 100)] private int segmentLength = 35;
     [SerializeField] private float lineWidth = 0.1f;
-    [SerializeField] private Vector2 forceGravity = new Vector2(0f, -1f);
+    [SerializeField] private Vector3 forceGravity = new Vector3(0f, -1f, 0);
 
     void Start()
     {
@@ -38,13 +38,13 @@ public class RopeBridge : MonoBehaviour
     }
     void DrawSpheres(float r)
     {
-        Gizmos.DrawSphere(StartPoint.transform.position, r);
-        Gizmos.DrawSphere(EndPoint.transform.position, r);
+        Gizmos.DrawSphere(StartPoint.position, r);
+        Gizmos.DrawSphere(EndPoint.position, r);
     }
 
     void DrawLines()
     {
-        Gizmos.DrawLine(StartPoint.transform.position, EndPoint.transform.position);
+        Gizmos.DrawLine(StartPoint.position, EndPoint.position);
     }
 #endif
 
@@ -65,7 +65,7 @@ public class RopeBridge : MonoBehaviour
         for (int i = 1; i < this.segmentLength; i++)
         {
             RopeSegment firstSegment = this.ropeSegments[i];
-            Vector2 velocity = firstSegment.posNow - firstSegment.posOld;
+            Vector3 velocity = firstSegment.posNow - firstSegment.posOld;
             firstSegment.posOld = firstSegment.posNow;
             firstSegment.posNow += velocity;
             firstSegment.posNow += forceGravity * Time.fixedDeltaTime;
@@ -118,7 +118,7 @@ public class RopeBridge : MonoBehaviour
 
             float dist = (firstSeg.posNow - secondSeg.posNow).magnitude;
             float error = Mathf.Abs(dist - this.ropeSegLen);
-            Vector2 changeDir = Vector2.zero;
+            Vector3 changeDir = Vector2.zero;
 
             if (dist > ropeSegLen)
             {
@@ -129,7 +129,7 @@ public class RopeBridge : MonoBehaviour
                 changeDir = (secondSeg.posNow - firstSeg.posNow).normalized;
             }
 
-            Vector2 changeAmount = changeDir * error;
+            Vector3 changeAmount = changeDir * error;
             if (i != 0)
             {
                 firstSeg.posNow -= changeAmount * 0.5f;
@@ -166,10 +166,10 @@ public class RopeBridge : MonoBehaviour
     [System.Serializable]
     public struct RopeSegment
     {
-        public Vector2 posNow;
-        public Vector2 posOld;
+        public Vector3 posNow;
+        public Vector3 posOld;
 
-        public RopeSegment(Vector2 pos)
+        public RopeSegment(Vector3 pos)
         {
             this.posNow = pos;
             this.posOld = pos;
